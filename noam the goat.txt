@@ -1,0 +1,96 @@
+//Adding new objects to database
+using DAL.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using System.Numerics;
+
+
+internal class Program
+{
+    static void AddStudent()
+    {
+        studentGradeDbContext db = new studentGradeDbContext();
+        String? studentName = Console.ReadLine();
+        Student s = new Student
+        { Name = studentName };
+
+        db.Entry(s).State = EntityState.Added;
+        db.SaveChanges();
+        Console.WriteLine(s.Id);
+    }
+
+    static void AddGrade()
+    {
+        studentGradeDbContext db = new studentGradeDbContext();
+        Console.WriteLine("insert student id");
+        int studentid = int.Parse(Console.ReadLine());
+        Console.WriteLine("insert the score");
+        int score = int.Parse(Console.ReadLine());
+        StudentGrade s = new StudentGrade
+        { StudentId = studentid, Score = score };
+
+        db.Entry(s).State = EntityState.Added;
+        db.SaveChanges();
+        Console.WriteLine(s.Id);
+    }
+
+    static void searchStudent()
+    {
+        Console.WriteLine("insert student id to search for");
+        int studentId = int.Parse(Console.ReadLine());
+
+        studentGradeDbContext db = new studentGradeDbContext();
+
+        List<Student> Students = db.Students.Include(p => p.StudentGrades).ToList();
+
+        foreach (Student s in Students)
+        {
+            if (studentId == s.Id)
+            {
+                Console.WriteLine("the student " + s.Name + "exist and his scores are:");
+                foreach (StudentGrade d in s.StudentGrades.)
+                {
+                    Console.Write(", " + s);
+                }
+                Console.WriteLine("");
+
+            }
+            Console.WriteLine("search finished");
+        }
+    }
+
+    static void getAveregeForAll()
+    {
+        int count = 0;
+
+        int avg = 0;
+
+        studentGradeDbContext db = new studentGradeDbContext();
+
+        List<Student> Students = db.Students.Include(p => p.StudentGrades).ToList();
+
+        foreach (Student s in Students)
+        {
+            foreach (StudentGrade d in s.StudentGrades)
+            {
+                count++;
+                avg += d.Score;
+            }
+        }
+        Console.WriteLine("the average is: " + avg);
+        Console.WriteLine("Averege finished");
+    }
+    static void Main(string[] args)
+    {
+
+        AddStudent();
+        AddStudent();
+        AddGrade();
+        AddGrade();
+        searchStudent();
+        getAveregeForAll();
+    }
+}
